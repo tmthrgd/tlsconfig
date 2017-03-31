@@ -62,3 +62,16 @@ func CipherSuites(chaCha20First, threeDES bool) []uint16 {
 
 	return cipherSuites
 }
+
+// Should3DES returns true iff 3DES cipher suites
+// should be offered to the client. It returns
+// true iff the client does not support TLS 1.1+.
+func Should3DES(chi *tls.ClientHelloInfo) bool {
+	for _, v := range chi.SupportedVersions {
+		if v >= tls.VersionTLS11 {
+			return false
+		}
+	}
+
+	return true
+}
