@@ -20,7 +20,7 @@ var (
 	// CipherSuites3DES is a list of TLS cipher suites
 	// that should only be offered if Should3DES
 	// returns true.
-	CipherSuites3DES = cipherSuites(false, false)
+	CipherSuites3DES = cipherSuites(false, true)
 )
 
 func cipherSuites(chaCha20First, threeDES bool) []uint16 {
