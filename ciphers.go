@@ -70,6 +70,14 @@ func cipherSuites(chaCha20First, threeDES bool) []uint16 {
 	return cipherSuites
 }
 
+// PrefersChaCha20 returns true iff a ChaCha20-Poly1305
+// cipher suite is listed as the clients first preference.
+func PrefersChaCha20(chi *tls.ClientHelloInfo) bool {
+	id := chi.CipherSuites[0]
+	return id == tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305 ||
+		id == tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+}
+
 // Should3DES returns true iff 3DES cipher suites
 // should be offered to the client. It returns
 // true iff the client does not support TLS 1.1+.
