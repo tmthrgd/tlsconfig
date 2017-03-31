@@ -7,16 +7,23 @@ package tlsconfig
 
 import "crypto/tls"
 
-// CipherSuites returns a list of cipher suites.
-//
-// If chaCha20First is true, then
-// TLS_ECDHE_*_WITH_CHACHA20_POLY1305 will be preferred over
-// TLS_ECDHE_*_WITH_AES_*_GCM_SHA*.
-//
-// If threeDES is true, then TLS_*_RSA_WITH_3DES_EDE_CBC_SHA
-// will be included as the last preference. A cipher suite
-// list with 3DES should only be offered to TLS 1.0 clients.
-func CipherSuites(chaCha20First, threeDES bool) []uint16 {
+var (
+	// CipherSuites is a preferred list of TLS cipher
+	// suites with AES-GCM before ChaCha20-Poly1305.
+	CipherSuites = cipherSuites(false, false)
+
+	// CipherSuitesChaCha20 is a preferred list of TLS
+	// cipher suites with ChaCha20-Poly1305 before
+	// AES-GCM.
+	CipherSuitesChaCha20 = cipherSuites(true, false)
+
+	// CipherSuites3DES is a list of TLS cipher suites
+	// that should only be offered if Should3DES
+	// returns true.
+	CipherSuites3DES = cipherSuites(false, false)
+)
+
+func cipherSuites(chaCha20First, threeDES bool) []uint16 {
 	var cipherSuites []uint16
 
 	if chaCha20First {
