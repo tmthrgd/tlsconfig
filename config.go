@@ -12,7 +12,7 @@ import (
 )
 
 // Config clones config and sets the list of cipher suites,
-// curves.
+// curves and disabled renegotiation.
 func Config(config *tls.Config) *tls.Config {
 	config = config.Clone()
 
@@ -25,6 +25,10 @@ func Config(config *tls.Config) *tls.Config {
 	if config.CurvePreferences == nil {
 		config.CurvePreferences = CurvePreferences
 	}
+
+	// Renegotiation is dangerous and the source of bugs
+	// and security issues. Be explicit in disabling it.
+	config.Renegotiation = tls.RenegotiateNever
 
 	return config
 }
