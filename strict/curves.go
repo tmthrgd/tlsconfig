@@ -3,7 +3,7 @@
 // Modified BSD License license that can be found in
 // the LICENSE file.
 
-package strict
+package tlsstrict
 
 import "crypto/tls"
 
