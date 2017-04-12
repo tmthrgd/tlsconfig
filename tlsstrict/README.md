@@ -1,6 +1,6 @@
 # tlsstrict
 
-[![GoDoc](https://godoc.org/github.com/tmthrgd/tlsconfig/strict?status.svg)](https://godoc.org/github.com/tmthrgd/tlsconfig/strict)
+[![GoDoc](https://godoc.org/github.com/tmthrgd/tlsconfig/tlsstrict?status.svg)](https://godoc.org/github.com/tmthrgd/tlsconfig/tlsstrict)
 
 A sane, common, strict and secure TLS configuration for Golang projects.
 
