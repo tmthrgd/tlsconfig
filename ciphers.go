@@ -32,6 +32,9 @@ const (
 // TLS13CipherSuites is a preferred list of TLS 1.3 cipher
 // suites with AES-GCM before ChaCha20-Poly1305. It is
 // intended for use with github.com/cloudflare/tls-tris.
+//
+// This will be removed if the TLS13CipherSuites field is
+// eliminated.
 var TLS13CipherSuites = []uint16{
 	tls13AES128GCMSHA256,
 	tls13AES256GCMSHA384,
@@ -41,6 +44,9 @@ var TLS13CipherSuites = []uint16{
 // TLS13CipherSuitesChaCha20 is a preferred list of TLS 1.3
 // cipher suites with ChaCha20-Poly1305 before AES-GCM.
 // It is intended for use with github.com/cloudflare/tls-tris.
+//
+// This will be removed if the TLS13CipherSuites field is
+// eliminated.
 var TLS13CipherSuitesChaCha20 = []uint16{
 	tls13CHACHA20POLY1305SHA256,
 	tls13AES128GCMSHA256,
