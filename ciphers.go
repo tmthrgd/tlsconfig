@@ -5,7 +5,11 @@
 
 package tlsconfig
 
-import "crypto/tls"
+import (
+	"crypto/tls"
+
+	"github.com/tmthrgd/tlsconfig/internal/tls-tris"
+)
 
 var (
 	// CipherSuites is a preferred list of TLS cipher
@@ -23,12 +27,6 @@ var (
 	CipherSuites3DES = cipherSuites(false, true)
 )
 
-const (
-	tls13AES128GCMSHA256        uint16 = 0x1301
-	tls13AES256GCMSHA384        uint16 = 0x1302
-	tls13CHACHA20POLY1305SHA256 uint16 = 0x1303
-)
-
 // TLS13CipherSuites is a preferred list of TLS 1.3 cipher
 // suites with AES-GCM before ChaCha20-Poly1305. It is
 // intended for use with github.com/cloudflare/tls-tris.
@@ -36,9 +34,9 @@ const (
 // This will be removed if the TLS13CipherSuites field is
 // eliminated.
 var TLS13CipherSuites = []uint16{
-	tls13AES128GCMSHA256,
-	tls13AES256GCMSHA384,
-	tls13CHACHA20POLY1305SHA256,
+	tlstris.TLS_AES_128_GCM_SHA256,
+	tlstris.TLS_AES_256_GCM_SHA384,
+	tlstris.TLS_CHACHA20_POLY1305_SHA256,
 }
 
 // TLS13CipherSuitesChaCha20 is a preferred list of TLS 1.3
@@ -48,9 +46,9 @@ var TLS13CipherSuites = []uint16{
 // This will be removed if the TLS13CipherSuites field is
 // eliminated.
 var TLS13CipherSuitesChaCha20 = []uint16{
-	tls13CHACHA20POLY1305SHA256,
-	tls13AES128GCMSHA256,
-	tls13AES256GCMSHA384,
+	tlstris.TLS_CHACHA20_POLY1305_SHA256,
+	tlstris.TLS_AES_128_GCM_SHA256,
+	tlstris.TLS_AES_256_GCM_SHA384,
 }
 
 func cipherSuites(chaCha20First, threeDES bool) []uint16 {
@@ -106,7 +104,7 @@ func PrefersChaCha20(chi *tls.ClientHelloInfo) bool {
 	id := chi.CipherSuites[0]
 	return id == tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305 ||
 		id == tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305 ||
-		id == tls13CHACHA20POLY1305SHA256
+		id == tlstris.TLS_CHACHA20_POLY1305_SHA256
 }
 
 // Should3DES returns true iff 3DES cipher suites
