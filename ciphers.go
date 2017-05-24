@@ -14,17 +14,17 @@ import (
 var (
 	// CipherSuites is a preferred list of TLS cipher
 	// suites with AES-GCM before ChaCha20-Poly1305.
-	CipherSuites = cipherSuites(false, false)
+	CipherSuites = cipherSuites(defaultSuites)
 
 	// CipherSuitesChaCha20 is a preferred list of TLS
 	// cipher suites with ChaCha20-Poly1305 before
 	// AES-GCM.
-	CipherSuitesChaCha20 = cipherSuites(true, false)
+	CipherSuitesChaCha20 = cipherSuites(chaCha20First)
 
 	// CipherSuites3DES is a list of TLS cipher suites
 	// that should only be offered if Should3DES
 	// returns true.
-	CipherSuites3DES = cipherSuites(false, true)
+	CipherSuites3DES = cipherSuites(include3DES)
 )
 
 // TLS13CipherSuites is a preferred list of TLS 1.3 cipher
@@ -51,10 +51,18 @@ var TLS13CipherSuitesChaCha20 = []uint16{
 	tlstris.TLS_AES_256_GCM_SHA384,
 }
 
-func cipherSuites(chaCha20First, threeDES bool) []uint16 {
+type cipherSuiteTypes int
+
+const (
+	defaultSuites cipherSuiteTypes = 0
+	chaCha20First cipherSuiteTypes = 1 << iota
+	include3DES
+)
+
+func cipherSuites(typ cipherSuiteTypes) []uint16 {
 	var cipherSuites []uint16
 
-	if chaCha20First {
+	if typ&chaCha20First == chaCha20First {
 		// ECDHE+ChaCha20-Poly1305
 		cipherSuites = append(cipherSuites,
 			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
@@ -68,7 +76,7 @@ func cipherSuites(chaCha20First, threeDES bool) []uint16 {
 		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 		tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384)
 
-	if !chaCha20First {
+	if typ&chaCha20First != chaCha20First {
 		// ECDHE+ChaCha20-Poly1305
 		cipherSuites = append(cipherSuites,
 			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
@@ -88,7 +96,7 @@ func cipherSuites(chaCha20First, threeDES bool) []uint16 {
 		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
 		tls.TLS_RSA_WITH_AES_256_CBC_SHA)
 
-	if threeDES {
+	if typ&include3DES == include3DES {
 		// 3DES
 		cipherSuites = append(cipherSuites,
 			tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
