@@ -19,7 +19,10 @@ func Config(config *tls.Config) *tls.Config {
 	if config.CipherSuites == nil {
 		config.PreferServerCipherSuites = true
 		config.CipherSuites = CipherSuites
-		tlstris.SetTLS13CipherSuites(config, TLS13CipherSuites)
+	}
+
+	if config.MaxVersion == 0 {
+		config.MaxVersion = tlstris.VersionTLS13
 	}
 
 	if config.CurvePreferences == nil {
@@ -39,7 +42,6 @@ func Config(config *tls.Config) *tls.Config {
 func GetConfigForClient(config *tls.Config) func(chi *tls.ClientHelloInfo) (*tls.Config, error) {
 	configChaCha20 := config.Clone()
 	configChaCha20.CipherSuites = CipherSuitesChaCha20
-	tlstris.SetTLS13CipherSuites(configChaCha20, TLS13CipherSuitesChaCha20)
 
 	config3DES := config.Clone()
 	config3DES.CipherSuites = CipherSuites3DES

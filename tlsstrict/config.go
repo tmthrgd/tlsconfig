@@ -18,12 +18,6 @@ func Config(config *tls.Config) *tls.Config {
 	if config.CipherSuites == nil {
 		config.PreferServerCipherSuites = true
 		config.CipherSuites = CipherSuites
-
-		if !tlstris.SetTLS13CipherSuites(config, TLS13CipherSuites) {
-			// Explicitly disable TLS 1.3 if we were not able
-			// to set the cipher suites.
-			config.MaxVersion = tls.VersionTLS12
-		}
 	}
 
 	// Session Tickets do not refresh the key material
@@ -35,6 +29,10 @@ func Config(config *tls.Config) *tls.Config {
 
 	if config.MinVersion == 0 {
 		config.MinVersion = tls.VersionTLS12
+	}
+
+	if config.MaxVersion == 0 {
+		config.MaxVersion = tlstris.VersionTLS13
 	}
 
 	if config.CurvePreferences == nil {

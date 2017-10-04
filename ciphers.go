@@ -27,30 +27,6 @@ var (
 	CipherSuites3DES = cipherSuites(include3DES)
 )
 
-// TLS13CipherSuites is a preferred list of TLS 1.3 cipher
-// suites with AES-GCM before ChaCha20-Poly1305. It is
-// intended for use with github.com/cloudflare/tls-tris.
-//
-// This will be removed if the TLS13CipherSuites field is
-// eliminated.
-var TLS13CipherSuites = []uint16{
-	tlstris.TLS_AES_128_GCM_SHA256,
-	tlstris.TLS_AES_256_GCM_SHA384,
-	tlstris.TLS_CHACHA20_POLY1305_SHA256,
-}
-
-// TLS13CipherSuitesChaCha20 is a preferred list of TLS 1.3
-// cipher suites with ChaCha20-Poly1305 before AES-GCM.
-// It is intended for use with github.com/cloudflare/tls-tris.
-//
-// This will be removed if the TLS13CipherSuites field is
-// eliminated.
-var TLS13CipherSuitesChaCha20 = []uint16{
-	tlstris.TLS_CHACHA20_POLY1305_SHA256,
-	tlstris.TLS_AES_128_GCM_SHA256,
-	tlstris.TLS_AES_256_GCM_SHA384,
-}
-
 type cipherSuiteTypes int
 
 const (
@@ -61,6 +37,27 @@ const (
 
 func cipherSuites(typ cipherSuiteTypes) []uint16 {
 	var cipherSuites []uint16
+
+	// TLS 1.3 cipher suites
+
+	if typ&chaCha20First == chaCha20First {
+		// ChaCha20-Poly1305
+		cipherSuites = append(cipherSuites,
+			tlstris.TLS_CHACHA20_POLY1305_SHA256)
+	}
+
+	// AES-GCM
+	cipherSuites = append(cipherSuites,
+		tlstris.TLS_AES_128_GCM_SHA256,
+		tlstris.TLS_AES_256_GCM_SHA384)
+
+	if typ&chaCha20First != chaCha20First {
+		// ChaCha20-Poly1305
+		cipherSuites = append(cipherSuites,
+			tlstris.TLS_CHACHA20_POLY1305_SHA256)
+	}
+
+	// SSL 3.0 - TLS 1.2 cipher suites
 
 	if typ&chaCha20First == chaCha20First {
 		// ECDHE+ChaCha20-Poly1305
