@@ -40,16 +40,14 @@ func Config(config *tls.Config) *tls.Config {
 // that automatically handles switching *tls.Config's for
 // ChaCha20-Poly1305 and 3DES as required.
 func GetConfigForClient(config *tls.Config) func(chi *tls.ClientHelloInfo) (*tls.Config, error) {
-	configChaCha20 := config.Clone()
-	configChaCha20.CipherSuites = CipherSuitesChaCha20
-
-	config3DES := config.Clone()
-	config3DES.CipherSuites = CipherSuites3DES
-
 	return func(chi *tls.ClientHelloInfo) (*tls.Config, error) {
 		if PrefersChaCha20(chi) {
+			configChaCha20 := config.Clone()
+			configChaCha20.CipherSuites = CipherSuitesChaCha20
 			return configChaCha20, nil
 		} else if Should3DES(chi) {
+			config3DES := config.Clone()
+			config3DES.CipherSuites = CipherSuites3DES
 			return config3DES, nil
 		}
 
