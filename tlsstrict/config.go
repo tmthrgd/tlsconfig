@@ -8,7 +8,7 @@ package tlsstrict
 import (
 	"crypto/tls"
 
-	"github.com/tmthrgd/tlsconfig/internal/tls-tris"
+	"github.com/tmthrgd/tlsconfig/internal"
 )
 
 // Config clones config and sets safe, strict defaults.
@@ -32,7 +32,7 @@ func Config(config *tls.Config) *tls.Config {
 	}
 
 	if config.MaxVersion == 0 {
-		config.MaxVersion = tlstris.VersionTLS13
+		config.MaxVersion = internal.VersionTLSLatest
 	}
 
 	if config.CurvePreferences == nil {

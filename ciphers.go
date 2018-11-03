@@ -8,7 +8,7 @@ package tlsconfig
 import (
 	"crypto/tls"
 
-	"github.com/tmthrgd/tlsconfig/internal/tls-tris"
+	"github.com/tmthrgd/tlsconfig/internal"
 )
 
 var (
@@ -38,24 +38,7 @@ const (
 func cipherSuites(typ cipherSuiteTypes) []uint16 {
 	var cipherSuites []uint16
 
-	// TLS 1.3 cipher suites
-
-	if typ&chaCha20First == chaCha20First {
-		// ChaCha20-Poly1305
-		cipherSuites = append(cipherSuites,
-			tlstris.TLS_CHACHA20_POLY1305_SHA256)
-	}
-
-	// AES-GCM
-	cipherSuites = append(cipherSuites,
-		tlstris.TLS_AES_128_GCM_SHA256,
-		tlstris.TLS_AES_256_GCM_SHA384)
-
-	if typ&chaCha20First != chaCha20First {
-		// ChaCha20-Poly1305
-		cipherSuites = append(cipherSuites,
-			tlstris.TLS_CHACHA20_POLY1305_SHA256)
-	}
+	// TLS 1.3 cipher suites are not configurable in crypto/tls
 
 	// SSL 3.0 - TLS 1.2 cipher suites
 
@@ -109,7 +92,7 @@ func PrefersChaCha20(chi *tls.ClientHelloInfo) bool {
 	id := chi.CipherSuites[0]
 	return id == tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305 ||
 		id == tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305 ||
-		id == tlstris.TLS_CHACHA20_POLY1305_SHA256
+		internal.IsTLS_CHACHA20_POLY1305_SHA256(id)
 }
 
 // Should3DES returns true iff 3DES cipher suites
