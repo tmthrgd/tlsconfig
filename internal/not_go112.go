@@ -11,6 +11,4 @@ import "crypto/tls"
 
 const VersionTLSLatest = tls.VersionTLS12
 
-func IsTLS_CHACHA20_POLY1305_SHA256(id uint16) bool {
-	return false
-}
+func IsTLS_CHACHA20_POLY1305_SHA256(uint16) bool { return false }

@@ -21,6 +21,10 @@ func Config(config *tls.Config) *tls.Config {
 		config.CipherSuites = CipherSuites
 	}
 
+	if config.MinVersion == 0 {
+		config.MinVersion = tls.VersionTLS12
+	}
+
 	if config.MaxVersion == 0 {
 		config.MaxVersion = internal.VersionTLSLatest
 	}
