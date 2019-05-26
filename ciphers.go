@@ -21,10 +21,10 @@ var (
 	// AES-GCM.
 	CipherSuitesChaCha20 = cipherSuites(chaCha20First)
 
-	// CipherSuites3DES is a list of TLS cipher suites
-	// that should only be offered if Should3DES
-	// returns true.
-	CipherSuites3DES = cipherSuites(include3DES)
+	// CipherSuites3DES is equal to CipherSuites.
+	//
+	// Deprecated: This should no longer be used.
+	CipherSuites3DES = CipherSuites
 )
 
 type cipherSuiteTypes int
@@ -32,7 +32,6 @@ type cipherSuiteTypes int
 const (
 	defaultSuites cipherSuiteTypes = 0
 	chaCha20First cipherSuiteTypes = 1 << iota
-	include3DES
 )
 
 func cipherSuites(typ cipherSuiteTypes) []uint16 {
@@ -63,7 +62,7 @@ func cipherSuites(typ cipherSuiteTypes) []uint16 {
 			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305)
 	}
 
-	cipherSuites = append(cipherSuites,
+	return append(cipherSuites,
 		// ECDHE+AES-CBC
 		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
 		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
@@ -75,15 +74,6 @@ func cipherSuites(typ cipherSuiteTypes) []uint16 {
 		// RSA+AES-CBC
 		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
 		tls.TLS_RSA_WITH_AES_256_CBC_SHA)
-
-	if typ&include3DES == include3DES {
-		// 3DES
-		cipherSuites = append(cipherSuites,
-			tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
-			tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA)
-	}
-
-	return cipherSuites
 }
 
 // PrefersChaCha20 returns true iff a ChaCha20-Poly1305
@@ -95,15 +85,7 @@ func PrefersChaCha20(chi *tls.ClientHelloInfo) bool {
 		internal.IsTLS_CHACHA20_POLY1305_SHA256(id)
 }
 
-// Should3DES returns true iff 3DES cipher suites
-// should be offered to the client. It returns
-// true iff the client does not support TLS 1.1+.
-func Should3DES(chi *tls.ClientHelloInfo) bool {
-	for _, v := range chi.SupportedVersions {
-		if v >= tls.VersionTLS11 {
-			return false
-		}
-	}
-
-	return true
-}
+// Should3DES always returns false.
+//
+// Deprecated: This should no longer be used.
+func Should3DES(*tls.ClientHelloInfo) bool { return false }
